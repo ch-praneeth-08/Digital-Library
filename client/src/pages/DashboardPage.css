@@ -1,52 +1,90 @@
 /* Add to src/pages/DashboardPage.css */
 
-.search-form {
-    display: flex; /* Align items horizontally */
-    justify-content: center; /* Center form elements */
-    margin-bottom: 2rem; /* Space below the search bar */
-    gap: 0.5rem; /* Space between items */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+.search-filter-form {
+    background-color: #f8f9fa; /* Light background for the form area */
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
   
-  .search-input {
+  .form-row {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 1rem; /* Space between items in a row */
+    margin-bottom: 1rem; /* Space between rows */
+    align-items: center; /* Align items vertically */
+  }
+  
+  .filter-controls {
+    justify-content: space-between; /* Distribute filter controls */
+  }
+  
+  .form-control {
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
-    min-width: 300px; /* Give the input some width */
-    flex-grow: 1; /* Allow input to grow */
-    max-width: 500px; /* Optional max width */
+    flex-grow: 1; /* Allow controls to grow */
+    min-width: 150px; /* Minimum width for filters */
   }
   
-  .search-button,
-  .clear-button {
+  /* Adjust search input width if needed */
+  .search-input.form-control {
+     max-width: none; /* Allow it to take full width in its row if alone */
+     min-width: 250px;
+  }
+  
+  .filter-select,
+  .filter-input {
+     /* Specific styling if needed */
+     background-color: white;
+  }
+  
+  .action-buttons {
+      justify-content: flex-end; /* Align buttons to the right */
+      margin-top: 0.5rem; /* Add some space above buttons */
+  }
+  
+  /* Basic button styling (can be more specific) */
+  .btn {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-    color: white;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+    color: white; /* Default text color */
   }
   
-  .search-button {
+  .btn-primary {
     background-color: #007bff; /* Blue */
   }
-  .search-button:hover {
+  .btn-primary:hover {
     background-color: #0056b3;
   }
   
-  .clear-button {
-      background-color: #6c757d; /* Gray */
+  .btn-secondary {
+    background-color: #6c757d; /* Gray */
   }
-  .clear-button:hover {
-      background-color: #5a6268;
+  .btn-secondary:hover {
+    background-color: #5a6268;
   }
   
-  /* Adjust display for no results message */
-  .materials-list p:first-child { /* Style specifically the 'no results' message if it's the only thing */
+  /* Ensure material list still has margin */
+  .materials-list {
+    margin-top: 0; /* Remove margin added before if form adds enough space */
+  }
+  
+  /* Adjust no results message styling */
+  .materials-list p:first-child { /* Style 'no results' message */
       text-align: center;
       font-style: italic;
       margin-top: 2rem;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 4px;
       color: #555;
   }

@@ -1,0 +1,125 @@
+/* src/pages/AdminRequestListPage.css */
+.admin-requests-container {
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 1rem auto;
+}
+
+.admin-requests-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.filter-section label {
+    font-weight: bold;
+}
+.filter-section select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+.requests-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.requests-table th,
+.requests-table td {
+    border: 1px solid #ddd;
+    padding: 10px 12px; /* Adjusted padding */
+    text-align: left;
+    vertical-align: middle; /* Align text vertically */
+    font-size: 0.95rem; /* Slightly smaller font */
+    line-height: 1.4; /* Improve readability */
+}
+
+ /* Limit width of description column */
+ .requests-table td:nth-child(5) { /* Assuming description is the 5th column */
+    max-width: 250px;
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* Older browsers */
+    word-break: break-word;
+ }
+
+
+.requests-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    white-space: nowrap; /* Prevent headers from wrapping */
+}
+
+.requests-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.requests-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Status badges */
+.status {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: white;
+    white-space: nowrap;
+}
+.status-pending { background-color: #ffc107; color: #333; } /* Yellow */
+.status-approved { background-color: #28a745; } /* Green */
+.status-rejected { background-color: #dc3545; } /* Red */
+.status-fulfilled { background-color: #17a2b8; } /* Teal */
+
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    white-space: nowrap;
+}
+
+.action-buttons button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+    color: white;
+}
+
+.btn-approve { background-color: #28a745; }
+.btn-approve:hover { background-color: #218838; }
+
+.btn-reject { background-color: #dc3545; }
+.btn-reject:hover { background-color: #c82333; }
+
+.btn-disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Error message styling (reuse if defined globally) */
+.error-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    text-align: center;
+}
