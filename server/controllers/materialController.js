@@ -84,122 +84,129 @@ const uploadMaterial = async (req, res) => {
 };
 
 
-// @desc    Get all/filtered academic materials with pagination (using api-query-params)
+// @desc    Get all/filtered academic materials with pagination (using api-query-params) - CORRECTED REGEX & DEBUG LOGS
 // @route   GET /api/materials
 // @access  Public (as configured in routes)
 const getMaterials = async (req, res) => {
+    console.log('\n--- [DEBUG] GET /api/materials Route Hit ---'); // Log start
     try {
-        // --- Use api-query-params to parse the query string for filters, sort, etc. ---
-        // Exclude 'keyword' from automatic AQP processing if we handle it manually
-        const { filter, skip, limit, sort, projection } = aqp(req.query, {
-             // blacklist: ['keyword'], // Option 1: Exclude keyword from AQP filter
+        // --- Log Raw Query Parameters ---
+        console.log('[DEBUG] Received Raw Query Params:', req.query);
+
+        // --- Use api-query-params ---
+        const { filter: aqpFilter, skip, limit, sort, projection } = aqp(req.query, {
+             // *** FIX 1: Add keyword to blacklist ***
+             blacklist: ['keyword'], // Prevent aqp from adding a 'keyword' field filter automatically
              casters: {
-                  insensitive: val => ({ $regex: `^${val}$`, $options: 'i' }) // Keep for other filters like category
+                  insensitive: val => ({ $regex: `^${val}$`, $options: 'i' })
              },
              castParams: {
                   category: 'insensitive',
-                  // title: 'insensitive', // Example if you wanted exact match insensitive title filter
              },
-             // whitelist: [...] // Optional: whitelist allowed AQP fields
+             // whitelist: [...]
         });
 
+        // Initialize the final filter object - Clone aqpFilter
+        let finalFilter = { ...aqpFilter };
+        console.log('[DEBUG] Filter object AFTER api-query-params processing (should NOT contain keyword):', JSON.stringify(finalFilter, null, 2));
+
+
         // --- **REGEX** Search Handling for 'keyword' Parameter ---
-        // Manually handle the 'keyword' parameter using $regex
         if (req.query.keyword) {
             const searchKeyword = req.query.keyword;
-            console.log("Using Regex search for parameter 'keyword':", searchKeyword);
+            console.log(`[DEBUG] Keyword parameter detected: "${searchKeyword}"`);
 
-            // Escape special regex characters in user input
+            // Escape special regex characters
             const escapedKeyword = searchKeyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedKeyword, 'i'); // 'i' for case-insensitive
+            console.log(`[DEBUG] Regex created: ${regex}`);
 
-            // If other filters exist from AQP, combine them with the $or condition for regex search
-            // This creates a structure like: { $and: [ { other_aqp_filters }, { $or: [ regex_conditions ] } ] }
-            // If no other filters exist, just use the $or condition directly.
-
+            // *** FIX 2: Correctly assign the regex variable ***
             const regexConditions = {
                 $or: [
-                    { title: regex },
-                    { description: regex },
-                    { keywords: regex }, // Check if any element in the keywords array matches
-                    { authors: regex },  // Check if any element in the authors array matches
-                    { category: regex }  // Check the category field
+                    { title: regex },       // Use the regex variable here
+                    { description: regex }, // Use the regex variable here
+                    { keywords: regex },    // Use the regex variable here (checks array elements)
+                    { authors: regex },     // Use the regex variable here (checks array elements)
+                    { category: regex }     // Use the regex variable here
                 ]
             };
+            console.log('[DEBUG] Regex $or conditions prepared:', JSON.stringify(regexConditions, null, 2));
 
-            // Check if AQP produced any filters (besides potentially 'keyword' itself)
-            const aqpHasFilters = Object.keys(filter).length > 0;
+
+            // Combine with existing filters from AQP (if any)
+            const aqpHasFilters = Object.keys(aqpFilter).length > 0;
 
             if (aqpHasFilters) {
-                 // Combine existing AQP filters with our regex search using $and
-                 // This handles cases like ?category=Physics&keyword=thermo
-                 filter.$and = filter.$and || []; // Initialize $and if it doesn't exist
-                 filter.$and.push(regexConditions); // Add our $or block for regex search
-
-                 // Optional: Remove 'keyword' field if AQP added it automatically based on query param
-                 // delete filter.keyword; // Uncomment if 'keyword' field appears in 'filter' unexpectedly
+                 console.log('[DEBUG] Combining AQP filters with Regex search using $and.');
+                 // Since aqpFilter is clean (no 'keyword'), combine safely
+                 finalFilter = { // Create new finalFilter with $and
+                      $and: [
+                           aqpFilter,       // Add original filters from AQP
+                           regexConditions // Add our $or block for regex search
+                      ]
+                 };
             } else {
+                 console.log('[DEBUG] No other AQP filters found, using only Regex search conditions.');
                  // If AQP didn't produce any filters, the main filter becomes just the regex search
-                 Object.assign(filter, regexConditions); // Copy the $or conditions into the filter
+                 finalFilter = regexConditions; // Overwrite finalFilter
             }
+
+        } else {
+             console.log('[DEBUG] No keyword parameter detected.');
         }
         // --- End Regex Search Handling ---
 
 
-        // --- Log Parsed Parameters (for debugging) ---
-        console.log("Filter Query Sent to MongoDB:", JSON.stringify(filter, null, 2));
-        console.log("Skip:", skip);
-        console.log("Limit (from AQP):", limit);
-        console.log("Sort:", sort);
-        console.log("Projection:", projection);
+        // --- Log Final Filter Object Before DB Query ---
+        console.log('>>> [DEBUG] FINAL Filter Object Sent to MongoDB:', JSON.stringify(finalFilter, null, 2));
 
-        // --- Apply Defaults (especially for limit/skip if not provided) ---
-        const finalLimit = limit && limit > 0 ? limit : 10; // Default limit: 10 items
-        const finalSkip = skip >= 0 ? skip : 0; // Default skip: 0
 
-        console.log("Final Skip:", finalSkip);
-        console.log("Final Limit:", finalLimit);
+        // --- Apply Defaults ---
+        const finalLimit = limit && limit > 0 ? limit : 10;
+        const finalSkip = skip >= 0 ? skip : 0;
+        console.log(`[DEBUG] Pagination: finalSkip=${finalSkip}, finalLimit=${finalLimit}`);
+        console.log(`[DEBUG] Sorting:`, sort || '(default)');
+        console.log(`[DEBUG] Projection:`, projection || '(default)');
 
-        // --- Execute Query ---
-        const materialsQuery = Material.find(filter) // Use the potentially modified filter object
+        // --- Execute Count Query ---
+        console.log('[DEBUG] Executing countDocuments query...');
+        const totalMaterials = await Material.countDocuments(finalFilter); // Use the final combined filter
+        console.log(`<<< [DEBUG] countDocuments Result: ${totalMaterials}`);
+
+        // --- Execute Find Query ---
+        console.log('[DEBUG] Executing find query...');
+        const materialsQuery = Material.find(finalFilter) // Use the final combined filter
           .sort(sort)
           .skip(finalSkip)
           .limit(finalLimit)
           .select(projection);
 
-        // Execute the actual database query
         const materials = await materialsQuery;
-        console.log(`Found ${materials.length} materials for the current page.`);
+        console.log(`<<< [DEBUG] find Query Result Length (current page): ${materials.length}`);
 
-        // --- Get Total Count for Pagination ---
-        // Use the same filter object for counting total matching documents
-        const totalMaterials = await Material.countDocuments(filter);
-        console.log(`Total matching materials (before pagination): ${totalMaterials}`);
 
         // --- Calculate Pagination Details ---
         const totalPages = Math.ceil(totalMaterials / finalLimit);
         const currentPage = Math.floor(finalSkip / finalLimit) + 1;
-
         const pagination = {
-            currentPage: currentPage,
-            totalPages: totalPages,
-            totalItems: totalMaterials,
-            itemsPerPage: finalLimit,
-            nextPage: (currentPage < totalPages) ? currentPage + 1 : null,
+            currentPage: currentPage, totalPages: totalPages, totalItems: totalMaterials,
+            itemsPerPage: finalLimit, nextPage: (currentPage < totalPages) ? currentPage + 1 : null,
             prevPage: currentPage > 1 ? currentPage - 1 : null
         };
-        console.log("Pagination results:", pagination);
+        console.log('[DEBUG] Calculated Pagination:', pagination);
+
 
         // --- Send Successful Response ---
-        res.status(200).json({
-            success: true,
-            count: materials.length, // Number of items on this page
-            pagination: pagination,
-            data: materials, // Array of materials found for this page
-        });
+        const responseJson = {
+            success: true, count: materials.length, pagination: pagination, data: materials,
+        };
+        console.log('--- [DEBUG] Sending success response. ---');
+        res.status(200).json(responseJson);
 
     } catch (error) {
-        console.error("Get Materials Error (using Regex):", error);
+        // --- Log Errors ---
+        console.error("!!! [DEBUG] ERROR in getMaterials:", error); // Log the full error
         res.status(500).json({ success: false, message: "Server error retrieving materials." });
     }
 };
@@ -233,23 +240,30 @@ const deleteMaterial = async (req, res) => {
         }
 
         // 4. Get file path before deleting DB record
-        const filePathOnDisk = path.join(__dirname, '..', 'uploads', material.filePath); // Construct full path
+        // Ensure 'uploads' directory is correctly referenced relative to the project root
+        const filePathOnDisk = path.join(__dirname, '..', 'uploads', material.filePath);
+        console.log(`[DEBUG] Attempting to delete file at path: ${filePathOnDisk}`);
+
 
         // 5. Delete the database record AND capture the deleted document
         const deletedMaterial = await Material.findByIdAndDelete(materialId);
 
         if (!deletedMaterial) {
             // Should not happen if findById worked, but handle just in case
+            console.log(`[DEBUG] Material with ID ${materialId} not found during delete operation.`);
             return res.status(404).json({ success: false, message: 'Material not found during delete operation.' });
         }
+        console.log(`[DEBUG] Successfully deleted material record with ID: ${materialId}`);
+
 
         // 6. Delete the physical file (asynchronously, errors are logged but don't block response)
         fs.unlink(filePathOnDisk, (err) => {
             if (err) {
                 // Log error, but don't send error response as DB record is deleted
-                console.error(`Error deleting file ${filePathOnDisk}:`, err);
+                console.error(`!!! [DEBUG] Error deleting file ${filePathOnDisk}:`, err);
+                // Common reasons: Incorrect path, file doesn't exist, permissions issue.
             } else {
-                console.log(`Successfully deleted file: ${filePathOnDisk}`);
+                console.log(`[DEBUG] Successfully deleted physical file: ${filePathOnDisk}`);
             }
         });
 
@@ -261,7 +275,7 @@ const deleteMaterial = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Delete Material Error:", error);
+        console.error("!!! [DEBUG] Delete Material Error:", error);
         if (error.name === 'CastError') {
             return res.status(400).json({ success: false, message: `Invalid material ID format: ${req.params.id}` });
         }
@@ -273,6 +287,6 @@ const deleteMaterial = async (req, res) => {
 // --- Export all controller functions ---
 module.exports = {
     uploadMaterial,
-    getMaterials,
+    getMaterials, // Ensure this points to the function with fixes & debug logs
     deleteMaterial,
 };
