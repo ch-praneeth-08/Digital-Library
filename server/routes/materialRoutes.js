@@ -1,31 +1,42 @@
-// routes/materialRoutes.js
+// backend/routes/materialRoutes.js
 const express = require('express');
-const { uploadMaterial, getMaterials, deleteMaterial} = require('../controllers/materialController'); // Controller
-const { protect, authorize } = require('../middleware/authMiddleware'); // Auth middleware
-const { uploadMaterial: multerUpload, handleUploadError } = require('../middleware/uploadMiddleware'); // Multer middleware
+const {
+    uploadMaterial,
+    getMaterials,
+    deleteMaterial
+} = require('../controllers/materialController');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
+// Use the correct exported names from uploadMiddleware
+const { uploadMiddleware, handleUploadError } = require('../middleware/uploadMiddleware');
 
-const validateRequest = require('../middleware/validateRequest');
-const { materialUploadSchema, materialQuerySchema } = require('../validations/materialValidation');
+// Optional Zod validation imports...
+
 const router = express.Router();
 
-// Route definition for uploading materials
+// POST route for Upload
 router.post(
-  '/upload', // Path: /api/materials/upload
-  protect, // 1. Ensure user is logged in
-  authorize('faculty', 'admin'), // 2. Ensure user role is faculty or admin
-  multerUpload, // 3. Use Multer to handle 'materialFile' upload *before* validation/controller
-  handleUploadError, // 4. Handle specific Multer errors (e.g., file size, type filter)
-  uploadMaterial // 6. Finally, run the controller logic
+    '/upload',
+    protect,                       // Check login
+    authorize('faculty', 'admin'), // Check role
+    uploadMiddleware,              // Use Multer's upload.single('materialFile')
+    handleUploadError,             // Handle specific upload errors AFTER attempting upload
+    // validateRequest(materialUploadSchema), // Optional: Validate body AFTER file handling
+    uploadMaterial                 // Run controller if upload successful
 );
 
-router.get('/',validateRequest(materialQuerySchema), getMaterials);
+// GET for Search/Filter
+router.get(
+    '/',
+    // validateRequest(materialQuerySchema), // Optional: Validate query params
+    getMaterials
+);
 
+// DELETE Route for Deleting Material
 router.delete(
-    '/:id', 
-    protect, 
+    '/:id',
+    protect,                     // Check login (authorization inside controller)
     deleteMaterial
 );
-module.exports = router;
 
-//hello
+module.exports = router;
