@@ -1,0 +1,109 @@
+/* src/pages/PhysicalBooksPage.css */
+.physical-books-container {
+    padding: 1rem 2rem;
+    max-width: 1000px;
+    margin: 1rem auto;
+}
+
+.physical-books-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.books-list {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+    gap: 1.5rem;
+}
+
+.book-item {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push button to bottom */
+    transition: box-shadow 0.2s ease-in-out;
+}
+.book-item:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+
+.book-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.7rem;
+    color: #0056b3;
+    font-size: 1.15rem;
+}
+
+.book-item p {
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.4;
+}
+.book-item p strong {
+    color: #111;
+}
+
+.book-item.unavailable {
+    opacity: 0.6;
+    background-color: #f8f8f8;
+}
+.book-item.unavailable .btn-book {
+    display: none; /* Hide button if unavailable */
+}
+
+
+.booking-section {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    /* border-top: 1px solid #eee; */ /* Optional separator */
+}
+
+.btn-book {
+    padding: 0.6rem 1.2rem;
+    background-color: #5cb85c; /* Green */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.btn-book:hover {
+    background-color: #4cae4c;
+}
+.btn-book:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.booking-error {
+    color: #dc3545; /* Red */
+    font-size: 0.85em;
+    margin-top: 0.5rem;
+}
+.booking-success {
+     color: #28a745; /* Green */
+     font-size: 0.85em;
+     margin-top: 0.5rem;
+     font-weight: bold;
+}
+
+/* Error message styling (reuse if defined globally) */
+.error-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    text-align: center;
+}

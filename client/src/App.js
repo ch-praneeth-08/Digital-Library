@@ -2,6 +2,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+import PhysicalBooksPage from './pages/PhysicalBooksPage';
+import AdminBookingListPage from './pages/AdminBookingListPage';
+import DiscussionHomePage from './pages/DiscussionHomePage';
+import TopicListPage from './pages/TopicListPage';
 
 // --- Import Page Components ---
 import HomePage from './pages/Homepage';
@@ -11,6 +15,7 @@ import DashboardPage from './pages/DashboardPage';
 import UploadPage from './pages/UploadPage'; // Import the new Upload page
 import RequestPage from './pages/RequestPage';
 import AdminRequestListPage from './pages/AdminRequestListPage';
+
 
 // --- Import Utility/Context/Layout Components ---
 import { useAuth } from './context/AuthContext'; // To check loading state
@@ -67,11 +72,15 @@ function App() {
                 <Route path="/upload" element={<UploadPage />} />
                 <Route path="/request" element={<RequestPage />} />
                 <Route path="/admin/requests" element={<AdminRequestListPage />} />
+                <Route path="/admin/bookings" element={<AdminBookingListPage />} />
+                <Route path="/discussions" element={<DiscussionHomePage />} />
+                <Route path="/discussions/category/:categoryName" element={<TopicListPage />} />
 
                 {/* Add other protected routes here as needed */}
                 {/* Example: <Route path="/profile" element={<ProfilePage />} /> */}
                 {/* Example: <Route path="/requests" element={<RequestPage />} /> */}
                 {/* Example: <Route path="/manage-books" element={<OfflineBookAdminPage />} /> */}
+                <Route path="/physical-books" element={<PhysicalBooksPage />} />
 
               </Route>
 

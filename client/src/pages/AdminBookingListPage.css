@@ -1,0 +1,31 @@
+/* Add to AdminRequestListPage.css or create AdminBookingListPage.css */
+
+.btn-action { /* Generic class for action buttons */
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+    color: white;
+}
+
+.btn-pickup { background-color: #ffc107; color: #333; } /* Yellow */
+.btn-pickup:hover { background-color: #e0a800; }
+
+.btn-return { background-color: #17a2b8; } /* Teal */
+.btn-return:hover { background-color: #138496; }
+
+.no-action {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+ /* Add styles for booking statuses if different from request statuses */
+ /* Make sure these match the values used in booking.status */
+ .status-booked { background-color: #ffc107; color: #333; } /* Yellow */
+ .status-picked-up { background-color: #007bff; } /* Blue */
+ .status-returned { background-color: #28a745; } /* Green */
+ .status-cancelled { background-color: #6c757d; } /* Gray */
+ .status-overdue { background-color: #dc3545; } /* Red */

@@ -40,9 +40,12 @@ function Navbar() {
                  {authToken ? (
                      <>
                          <li><Link to="/dashboard">Dashboard</Link></li>
+                         <li><Link to="/physical-books">Physical Books</Link></li>
+                         <li><Link to="/discussions">Discussions</Link></li>
                          {isAdminOrFaculty && <li><Link to="/upload">Upload Material</Link></li>}
                          <li><Link to="/request">Request Material</Link></li>
                          {isAdminOrFaculty && <li><Link to="/admin/requests">Manage Requests</Link></li>}
+                         {isAdminOrFaculty && <li><Link to="/admin/bookings">Manage Bookings</Link></li>}
                          {user && <li className="navbar-user">Welcome, {user.name}! ({user.role})</li>}
                          <li><button onClick={handleLogout} className="logout-button">Logout</button></li> {/* Ensure onClick is here */}
                      </>

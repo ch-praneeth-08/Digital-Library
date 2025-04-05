@@ -1,0 +1,46 @@
+.discussion-home-container {
+    padding: 1rem 2rem;
+    max-width: 800px;
+    margin: 1rem auto;
+  }
+  .discussion-home-container h2 { text-align: center; margin-bottom: 0.5rem;}
+  .discussion-home-container p { text-align: center; margin-bottom: 2rem; color: #555; }
+  
+  .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  /* Add to src/pages/DiscussionHomePage.css */
+.category-description {
+    display: block; /* Make description appear on a new line */
+    font-size: 0.85em;
+    color: #555;
+    font-weight: normal; /* Reset font weight */
+    margin-top: 0.3rem;
+}
+  .category-item {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .category-item:hover {
+      background-color: #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  
+  .category-item a {
+    display: block;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: #0056b3;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  .category-item a:hover {
+    color: #003d80;
+  }
+  
