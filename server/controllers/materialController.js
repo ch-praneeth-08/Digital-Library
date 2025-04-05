@@ -1,7 +1,7 @@
 // controllers/materialController.js
 const Material = require('../models/Material');
 // NOTE: Removed AQP and GetMaterials/DeleteMaterial for clarity on just upload
-
+const aqp = require('api-query-params'); 
 const path = require('path'); // REQUIRED for file paths
 const fs = require('fs');      // REQUIRED for file system operations (cleanup)
 
