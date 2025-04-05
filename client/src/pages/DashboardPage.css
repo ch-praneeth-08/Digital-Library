@@ -1,0 +1,52 @@
+/* Add to src/pages/DashboardPage.css */
+
+.search-form {
+    display: flex; /* Align items horizontally */
+    justify-content: center; /* Center form elements */
+    margin-bottom: 2rem; /* Space below the search bar */
+    gap: 0.5rem; /* Space between items */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  }
+  
+  .search-input {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    min-width: 300px; /* Give the input some width */
+    flex-grow: 1; /* Allow input to grow */
+    max-width: 500px; /* Optional max width */
+  }
+  
+  .search-button,
+  .clear-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: white;
+  }
+  
+  .search-button {
+    background-color: #007bff; /* Blue */
+  }
+  .search-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .clear-button {
+      background-color: #6c757d; /* Gray */
+  }
+  .clear-button:hover {
+      background-color: #5a6268;
+  }
+  
+  /* Adjust display for no results message */
+  .materials-list p:first-child { /* Style specifically the 'no results' message if it's the only thing */
+      text-align: center;
+      font-style: italic;
+      margin-top: 2rem;
+      color: #555;
+  }
