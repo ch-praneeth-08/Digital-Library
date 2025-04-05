@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import './FormStyles.css';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +11,7 @@ function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Get the login function from context
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,31 +22,23 @@ function LoginPage() {
     const loginUrl = `${backendUrl}/api/users/login`;
 
     try {
-      const response = await axios.post(loginUrl, {
-        email,
-        password,
-      });
+      const response = await axios.post(loginUrl, { email, password });
 
       if (response.data && response.data.token) {
-        // Extract token and user data from response (as confirmed before)
         const token = response.data.token;
         const userData = {
-            id: response.data._id,
-            name: response.data.name,
-            email: response.data.email,
-            role: response.data.role,
+          id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
         };
 
-        // Call the login function from AuthContext
         login(token, userData);
-
         setLoading(false);
-        // Redirect after successful context update
         navigate('/dashboard');
       } else {
         throw new Error('Login successful, but no token received.');
       }
-
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
@@ -54,46 +46,48 @@ function LoginPage() {
     }
   };
 
-  // ... rest of the component (return statement) remains the same
-    return (
-        <div className="form-container">
-        <h2>Login Page</h2>
+  return (
+    <div className="form-container">
+      <div className="form-box">
+        <h2 className="form-title">Welcome Back</h2>
+        <p className="form-subtitle">Please login to your account</p>
         <form onSubmit={handleSubmit}>
-            {/* ... form inputs ... */}
-             <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                />
-                </div>
-                <div className="form-group">
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                />
-            </div>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
 
-            {error && <p className="error-message">{error}</p>}
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
 
-            <button type="submit" disabled={loading}>
+          {error && <p className="error-message">{error}</p>}
+
+          <button type="submit" className="login-button" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
-            </button>
+          </button>
         </form>
-         <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-            Don't have an account? <Link to="/register">Register here</Link>
+        <p className="register-text">
+          Don't have an account? <Link to="/register">Register here</Link>
         </p>
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default LoginPage;

@@ -1,0 +1,69 @@
+.homepage-wrapper {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff0f3;
+    overflow-x: hidden;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .homepage-hero {
+    background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    position: relative;
+  }
+  
+  .overlay {
+    background: rgba(255, 240, 243, 0.8);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    color: #3b2f2f;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #5e4b4b;
+    max-width: 600px;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-button {
+    background-color: #e5989b;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .hero-button:hover {
+    background-color: #d16b7b;
+  }
+  
+  .image-showcase {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 2rem;
+    background-color: #fadadd;
+  }
+  
+  .image-showcase img {
+    width: 30%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  

@@ -1,0 +1,105 @@
+/* Fullscreen Background with Image + Gradient */
+    
+    
+    /* Centering the Form */    
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: 
+      linear-gradient(rgba(255, 205, 245, 0.6), rgba(210, 190, 255, 0.6)),
+      url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Ffree-photos-vectors%2Fdigital-library-background&psig=AOvVaw2Mqe2hbIB2GUL2wrAqGdmf&ust=1743980246417000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKD_s-3-wYwDFQAAAAAdAAAAABAK') no-repeat center center/cover;
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Login Box */
+  .form-box {
+    background-color: rgba(255, 255, 255, 0.88);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Title & Subtitle */
+  .form-title {
+    font-size: 2rem;
+    color: #9c5de5;
+    margin-bottom: 8px;
+  }
+  
+  .form-subtitle {
+    color: #5d5470;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+  }
+  
+  /* Input Fields */
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #5c5470;
+    font-weight: 600;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d6c3f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #af75e3;
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: #e74c3c;
+    margin-bottom: 15px;
+  }
+  
+  /* Login Button */
+  .login-button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #b76df2;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .login-button:hover {
+    background-color: #9b57e3;
+  }
+  
+  /* Register Prompt */
+  .register-text {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .register-text a {
+    color: #b76df2;
+    text-decoration: none;
+  }
+  
+  .register-text a:hover {
+    text-decoration: underline;
+  }
+  
