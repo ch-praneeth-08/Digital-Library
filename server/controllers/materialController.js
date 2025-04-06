@@ -286,10 +286,91 @@ const getMaterials = async (req, res) => {
         res.status(500).json({ success: false, message: "Server error retrieving materials." });
     }
 };
+const updateMaterialInventory = async (req, res) => {
+    const materialId = req.params.id;
+    const { isPhysical, isbn, totalCopies, description, category, authors, title, publicationYear } = req.body;
+
+    let parsedTotalCopies; // Use a separate variable for the parsed numeric value
+     if (totalCopies !== undefined) {
+        parsedTotalCopies = parseInt(totalCopies, 10);
+        if (isNaN(parsedTotalCopies) || parsedTotalCopies < 0) {
+            return res.status(400).json({ success: false, message: 'Total copies must be a non-negative number.' });
+        }
+     }
+
+    try {
+        // Find the material first
+        const material = await Material.findById(materialId);
+        if (!material) {
+            return res.status(404).json({ success: false, message: 'Material not found.' });
+        }
+
+        // Prepare update object - only include fields that are present in request
+        const updateData = {};
+        if (isPhysical !== undefined) updateData.isPhysical = Boolean(isPhysical);
+        if (isbn !== undefined) updateData.isbn = isbn;
+        if (description !== undefined) updateData.description = description;
+        if (category !== undefined) updateData.category = category;
+        if (authors !== undefined) updateData.authors = parseToArray(authors);
+        if (title !== undefined) updateData.title = title;
+        if (publicationYear !== undefined) updateData.publicationYear = Number(publicationYear);
 
 
+        // --- CORRECTED Inventory Logic ---
+         if (parsedTotalCopies !== undefined) {
+             const oldTotal = material.totalCopies ?? 0; // Default to 0 if undefined
+             const oldAvailable = material.availableCopies ?? 0; // Default to 0 if undefined
+
+            updateData.totalCopies = parsedTotalCopies; // Set the new total
+
+             // Check if totalCopies actually changed
+            if (parsedTotalCopies !== oldTotal) {
+                 // Calculate difference based on the *change* in total copies
+                 const difference = parsedTotalCopies - oldTotal;
+                 // Calculate the new available copies based on the change
+                 const newAvailableBasedOnChange = oldAvailable + difference;
+                 // Ensure available copies are >= 0 and <= new total copies
+                updateData.availableCopies = Math.max(0, Math.min(newAvailableBasedOnChange, parsedTotalCopies));
+                 console.log(`Inventory Update: Total changed from ${oldTotal} to ${updateData.totalCopies}. Available adjusted from ${oldAvailable} to ${updateData.availableCopies}.`);
+             } else {
+                 // If total didn't change, ensure available is still valid (just in case it was weird before)
+                 // but usually don't modify it unless total changes.
+                 // For robustness, let's ensure it's capped by the (unchanged) total
+                 updateData.availableCopies = Math.max(0, Math.min(oldAvailable, parsedTotalCopies));
+                console.log(`Inventory Update: Total (${updateData.totalCopies}) unchanged. Ensured available (${updateData.availableCopies}) is valid.`);
+             }
+
+         }
+        // --- END CORRECTED Inventory Logic ---
+
+
+        // Perform the update
+        const updatedMaterial = await Material.findByIdAndUpdate(
+            materialId,
+            { $set: updateData }, // Use $set
+            { new: true, runValidators: true }
+        );
+
+         if (!updatedMaterial) return res.status(404).json({ success: false, message: 'Material update failed (not found).' });
+
+        res.status(200).json({
+            success: true,
+            message: 'Material inventory updated successfully.',
+            data: updatedMaterial
+        });
+
+    } catch (error) {
+        console.error("Update Material Inventory Error:", error);
+        if (error.name === 'ValidationError' || error.code === 11000) return res.status(400).json({ success: false, message: error.message });
+         if (error.name === 'CastError') return res.status(400).json({ success: false, message: `Invalid ID format: ${materialId}`});
+        res.status(500).json({ success: false, message: 'Server error updating material inventory.' });
+    }
+};
+
+// --- Export *ALL* controller functions ---
 module.exports = {
-    uploadMaterial,
-    getMaterials, // Add back if using the combined file
-     deleteMaterial // Add back if using the combined file
+  uploadMaterial,
+  getMaterials,
+  deleteMaterial,
+  updateMaterialInventory
 };

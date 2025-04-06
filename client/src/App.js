@@ -70,7 +70,7 @@ function App() {
 
                 {/* Upload Material Page - Accessible only to authenticated (and potentially authorized) users */}
                 <Route path="/upload" element={<UploadPage />} />
-                <Route path="/request" element={<RequestPage />} />
+                {/* <Route path="/request" element={<RequestPage />} /> */}
                 <Route path="/admin/requests" element={<AdminRequestListPage />} />
                 <Route path="/admin/bookings" element={<AdminBookingListPage />} />
                 <Route path="/discussions" element={<DiscussionHomePage />} />

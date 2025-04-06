@@ -3,7 +3,8 @@ const express = require('express');
 const {
     uploadMaterial,
     getMaterials,
-    deleteMaterial
+    deleteMaterial,
+    updateMaterialInventory
 } = require('../controllers/materialController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -37,6 +38,14 @@ router.delete(
     '/:id',
     protect,                     // Check login (authorization inside controller)
     deleteMaterial
+);
+
+router.put(
+    '/:id/inventory', // Or just PUT /:id if preferred, adjust Zod/logic
+    protect,
+    authorize('admin', 'faculty'), // Restrict access
+    // Add Zod validation if needed
+    updateMaterialInventory
 );
 
 module.exports = router;

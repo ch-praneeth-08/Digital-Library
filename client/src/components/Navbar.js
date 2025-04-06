@@ -35,9 +35,9 @@ function Navbar() {
           <>
             <li><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/physical-books">Physical Books</Link></li>
-            <li><Link to="/discussions">Discussions</Link></li>
+            {/* <li><Link to="/discussions">Discussions</Link></li> */}
             {isAdminOrFaculty && <li><Link to="/upload">Upload</Link></li>}
-            <li><Link to="/request">Request</Link></li>
+            {/* <li><Link to="/request">Request</Link></li> */}
             {isAdminOrFaculty && <li><Link to="/admin/requests">Requests</Link></li>}
             {isAdminOrFaculty && <li><Link to="/admin/bookings">Bookings</Link></li>}
             <li>
