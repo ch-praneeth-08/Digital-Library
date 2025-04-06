@@ -33,11 +33,11 @@ const bookingRoutes = require('./routes/bookingRoutes');
 
 const uploadsDirectory = path.join(__dirname, 'uploads');
 console.log(`Serving static files from: ${uploadsDirectory}`); 
-app.use('/uploads', express.static(uploadsDirectory));
 app.use('/api/forum-categories', forumCategoryRoutes);
 app.use('/api/forum-threads', forumThreadRoutes);
 app.use('/api/bookings', bookingRoutes); 
 
+app.use('/uploads', express.static(uploadsDirectory));
 // --- Start Server ---
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
