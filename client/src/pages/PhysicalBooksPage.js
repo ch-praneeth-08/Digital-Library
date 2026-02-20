@@ -8,6 +8,7 @@ function PhysicalBooksPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [bookingStatus, setBookingStatus] = useState({}); // To track booking attempts per book
+    const [searchTerm, setSearchTerm] = useState(''); // Search state
 
     // Fetch available physical books
     const fetchPhysicalBooks = useCallback(async () => {
@@ -84,19 +85,48 @@ function PhysicalBooksPage() {
         }
     };
 
+    // Filter books based on search term
+    const filteredBooks = books.filter(book => {
+        if (!searchTerm) return true;
+        const searchLower = searchTerm.toLowerCase();
+        return (
+            book.title?.toLowerCase().includes(searchLower) ||
+            book.authors?.some(author => author.toLowerCase().includes(searchLower)) ||
+            book.isbn?.toLowerCase().includes(searchLower)
+        );
+    });
+
     return (
         <div className="physical-books-container">
             <h2>Available Physical Books for Borrowing</h2>
+
+            {/* Search Bar */}
+            <div className="search-section">
+                <input
+                    type="text"
+                    placeholder="Search by title, author, or ISBN..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input"
+                />
+                {searchTerm && (
+                    <button onClick={() => setSearchTerm('')} className="btn-clear-search">
+                        Clear
+                    </button>
+                )}
+            </div>
 
             {isLoading && <p>Loading available books...</p>}
             {error && <p className="error-message">{error}</p>}
 
             {!isLoading && !error && (
                 <div className="books-list">
-                    {books.length === 0 ? (
+                    {filteredBooks.length === 0 && books.length > 0 && searchTerm ? (
+                        <p>No books found matching "{searchTerm}". Try a different search term.</p>
+                    ) : filteredBooks.length === 0 ? (
                         <p>No physical books are currently available for borrowing.</p>
                     ) : (
-                        books.map(book => {
+                        filteredBooks.map(book => {
                             const currentBookingStatus = bookingStatus[book._id] || {};
                             const isAvailable = (book.quantityAvailable ?? 0) > 0; // Check availability
 
